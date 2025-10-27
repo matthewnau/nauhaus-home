@@ -1,0 +1,103 @@
+version: "3.9"
+
+services:
+  gluetun-c01:
+    image: qmcgaw/gluetun:v3.40.0
+    container_name: gluetun-c01
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 10100:10100 # expose HTTP WebUI for qbittorrent-c01
+      - 10110:10110 # expose HTTP WebUI for soulseek-c01
+    environment:
+      - VPN_SERVICE_PROVIDER=cyberghost
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=E7zMc96EHD
+      - OPENVPN_PASSWORD=r9cxjgKy6c
+    volumes:
+      - /volume1/docker/services/gluetun-c01:/gluetun
+    restart: unless-stopped
+  qbittorrent-c01:
+    image: linuxserver/qbittorrent:5.1.2
+    container_name: qbittorrent-c01
+    network_mode: service:gluetun-c01
+    environment:
+      - PUID=1028
+      - PGID=100
+      - WEBUI_PORT=10100
+      - TORRENTING_PORT=20100
+      - TZ=Etc/UTC
+    volumes:
+      - /volume1/docker/services/qbittorrent-c01:/config
+      - /volume1/downloads/qbittorrent-c01:/downloads
+    restart: unless-stopped
+  soulseek-c01:
+    image: slskd/slskd:0.23.2
+    container_name: soulseek-c01
+    network_mode: service:gluetun-c01
+    user: 1028:100
+    environment:
+      - SLSKD_SLSK_USERNAME=mischef
+      - SLSKD_SLSK_PASSWORD=jjxc0897nAbbc4!
+      - SLSKD_HTTP_PORT=10110
+      - SLSKD_SLSK_LISTEN_PORT=20110
+      - SLSKD_NO_HTTPS=true
+      - SLSKD_INCOMPLETE_DIR=/downloads/incomplete
+      - SLSKD_DOWNLOADS_DIR=/downloads/complete
+      - SLSKD_SHARED_DIR=/media/Movies
+    volumes:
+      - /volume1/docker/services/soulseek-c01:/app
+      - /volume1/downloads/soulseek-c01:/downloads
+      - /volume1/media:/media
+    restart: unless-stopped
+  mkvtoolnix-c01:
+    image: jlesage/mkvtoolnix:v25.09.1
+    container_name: mkvtoolnix-c01
+    ports:
+      - 10200:10200 # expose HTTP WebUI
+    environment:
+      - WEB_LISTENING_PORT=10200
+      - USER_ID=1028
+      - GROUP_ID=100
+    volumes:
+      - /volume1/docker/services/mkvtoolnix-c01:/config
+      - /volume1/downloads:/storage
+    restart: unless-stopped
+  mkvtoolnix-c02:
+    image: jlesage/mkvtoolnix:v25.09.1
+    container_name: mkvtoolnix-c02
+    ports:
+      - 10210:10210 # expose HTTP WebUI
+    environment:
+      - WEB_LISTENING_PORT=10210
+      - USER_ID=1028
+      - GROUP_ID=100
+    volumes:
+      - /volume1/docker/services/mkvtoolnix-c02:/config
+      - /volume1/downloads:/storage
+    restart: unless-stopped
+  filebot-c01:
+    image: jlesage/filebot:v25.07.2
+    container_name: filebot-c01
+    ports:
+      - 10220:10220 # expose HTTP WebUI
+    environment:
+      - WEB_LISTENING_PORT=10220
+      - USER_ID=1028
+      - GROUP_ID=100
+    volumes:
+      - /volume1/docker/services/filebot-c01:/config
+      - /volume1/downloads:/storage
+    restart: unless-stopped
+  server-c01:
+    image: halverneus/static-file-server:v1.8.11
+    container_name: server-c01
+    ports:
+      - 10410:10410 # expose HTTP WebUI
+    environment:
+      - PORT=10410
+    volumes:
+      - /volume1/docker/services/server-c01:/web
+    restart: unless-stopped

@@ -1,0 +1,23 @@
+{
+	// Hostname aliases:
+	"hosts": {"synology-nas": "100.127.144.87"},
+
+	// Access control lists:
+	"acls": [
+		{
+			"users":  ["matthewnau@github"],
+			"ports":  ["*:*"],
+			"action": "accept",
+		},
+		{
+			"users":  ["jtn224@github"],
+			"ports":  ["synology-nas:5000,10100,10210,10220"],
+			"action": "accept",
+		},
+		{ // Allows only Plex traffic by default for all users.
+			"users":  ["*"],
+			"ports":  ["synology-nas:32400"],
+			"action": "accept",
+		},
+	],
+}
