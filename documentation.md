@@ -3,7 +3,7 @@
 ## Port Registry
 
 | Web (HTTP / HTTPS) | Functional (P2P / Listen) | Category / Purpose                        |
-| ------------------ | ------------------------- | ----------------------------------------- |
+| :----------------- | :------------------------ | :---------------------------------------- |
 | `10000`–`10099`    | `20000`–`20099`           | Security / Networking (VPNs, Ad Blocking) |
 | `10100`–`10199`    | `20100`–`20199`           | Download / P2P (qBittorrent, Soulseek)    |
 | `10200`–`10299`    | `20200`–`20299`           | Media Processing (MKVToolNix, Filebot)    |
@@ -13,7 +13,7 @@
 ## Service Registry
 
 | Category              | Service / Container | Image                           | Web Port | Functional Ports |
-| --------------------- | ------------------- | ------------------------------- | -------- | ---------------- |
+| :-------------------- | :------------------ | :------------------------------ | :------- | :--------------- |
 | Security / Networking | `gluetun-c01`       | `qmcgaw/gluetun`                | —        | —                |
 | Download / P2P        | `qbittorrent-c01`   | `linuxserver/qbittorrent`       | `10100`  | `20100`          |
 | Download / P2P        | `soulseek-c01`      | `slskd/slskd`                   | `10110`  | `20110`          |
